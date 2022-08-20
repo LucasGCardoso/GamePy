@@ -7,8 +7,9 @@ SCREEN_HEIGHT = 480
 TILESIZE = 32
 FPS = 60
 # Layers determines who spawns first. First the blocks (floor and walls), then the player, in the top of the floor.
-BLOCK_LAYER = 1
-PLAYER_LAYER = 2
+GROUND_LAYER = 1
+BLOCK_LAYER = 2
+PLAYER_LAYER = 3
 PLAYER_SPEED = 3
 
 RED = (255, 0, 0)
@@ -28,10 +29,10 @@ tilemap = [
     'B..................B',
     'B.....BBB..........B',
     'B..................B',
-    'B.......P..........B',
+    'B..................B',
     'B..................B',
     'B..........BBB.....B',
-    'B..........B.......B',
+    'B..........B..P....B',
     'B..........B.......B',
     'B..........B.......B',
     'B..................B',

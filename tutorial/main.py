@@ -12,7 +12,20 @@ class Game:
         # self.font = pygame.font.Font('Arial', 32)
         self.running = True
 
-    def new_game(self):
+        self.character_spritesheet = SpriteSheet('img/character.png')
+        self.terrain_spritesheet = SpriteSheet('img/terrain.png')
+
+    # For the walls coliders:
+    def create_tilemap(self):
+        for i, row in enumerate(tilemap):
+            for j, column in enumerate(row):
+                Ground(self, j, i)
+                if column == "B":
+                    Block(self, j, i)
+                if column == "P":
+                    Player(self, j, i)
+
+    def new(self):
         # A new game starts.
         self.playing = True
 
@@ -21,17 +34,7 @@ class Game:
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
 
-        self.player = Player(self, 1, 2)
         self.create_tilemap()
-
-    # For the walls coliders:
-    def create_tilemap(self):
-        for i, row in enumerate(tilemap):
-            for j, column in enumerate(row):
-                if column == 'B':
-                    Block(self, j, i)
-                if column == 'P':
-                    Player(self, j, i)
 
     def events(self):
         # Game loop events
@@ -69,7 +72,7 @@ class Game:
 
 g = Game()
 g.intro_screen()
-g.new_game()
+g.new()
 while g.running:
     g.main()
     g.game_over()
