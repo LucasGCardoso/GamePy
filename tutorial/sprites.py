@@ -35,6 +35,8 @@ class Player(pygame.sprite.Sprite):
         # Enum
         self.facing = 'down'
 
+        self.animation_loop = 1
+
         self.image = self.game.character_spritesheet.get_sprite(
             3, 2, self.width, self.height)
 
@@ -45,9 +47,12 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.movement()
+        self.animate()
 
         self.rect.x += self.x_change
+        self.collide_blocks('x')
         self.rect.y += self.y_change
+        self.collide_blocks('y')
 
         # Temp variables, mayber return from method movement
         self.x_change = 0
@@ -68,6 +73,93 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN]:
             self.y_change += PLAYER_SPEED
             self.facing = 'down'
+
+    def collide_blocks(self, direction):
+        if direction == "x":
+            # Checks if a rect of a sprite is inside another rect
+            hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+            if hits:
+                # If moving right
+                if self.x_change > 0:
+                    # Lines the top left corner of the sprites and then moves it to the left width amount, rewriting the player's position.
+                    self.rect.x = hits[0].rect.left - self.rect.width
+                # If moving left
+                if self.x_change < 0:
+                    # Lines the top left corner of the sprites.
+                    self.rect.x = hits[0].rect.right
+        if direction == "y":
+            hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+            if hits:
+                # If moving down
+                if self.y_change > 0:
+                    # Lines the top left corner of the sprites and then moves it to the left width amount, rewriting the player's position.
+                    self.rect.y = hits[0].rect.top - self.rect.height
+                # If moving left
+                if self.y_change < 0:
+                    # Lines the top left corner of the sprites.
+                    self.rect.y = hits[0].rect.bottom
+
+    def animate(self):
+        # Must have a better way
+        down_animations = [self.game.character_spritesheet.get_sprite(3, 2, self.width, self.height),
+                           self.game.character_spritesheet.get_sprite(
+                               35, 2, self.width, self.height),
+                           self.game.character_spritesheet.get_sprite(68, 2, self.width, self.height)]
+
+        up_animations = [self.game.character_spritesheet.get_sprite(3, 34, self.width, self.height),
+                         self.game.character_spritesheet.get_sprite(
+                             35, 34, self.width, self.height),
+                         self.game.character_spritesheet.get_sprite(68, 34, self.width, self.height)]
+
+        left_animations = [self.game.character_spritesheet.get_sprite(3, 98, self.width, self.height),
+                           self.game.character_spritesheet.get_sprite(
+                               35, 98, self.width, self.height),
+                           self.game.character_spritesheet.get_sprite(68, 98, self.width, self.height)]
+
+        right_animations = [self.game.character_spritesheet.get_sprite(3, 66, self.width, self.height),
+                            self.game.character_spritesheet.get_sprite(
+                                35, 66, self.width, self.height),
+                            self.game.character_spritesheet.get_sprite(68, 66, self.width, self.height)]
+
+        if self.facing == "down":
+            if self.y_change == 0:
+                self.image = self.game.character_spritesheet.get_sprite(
+                    3, 2, self.width, self.height)
+            else:
+                self.image = down_animations[math.floor(self.animation_loop)]
+                self.animation_loop += 0.1
+                if self.animation_loop >= 3:
+                    self.animation_loop = 1
+
+        if self.facing == "up":
+            if self.y_change == 0:
+                self.image = self.game.character_spritesheet.get_sprite(
+                    3, 34, self.width, self.height)
+            else:
+                self.image = up_animations[math.floor(self.animation_loop)]
+                self.animation_loop += 0.1
+                if self.animation_loop >= 3:
+                    self.animation_loop = 1
+
+        if self.facing == "left":
+            if self.x_change == 0:
+                self.image = self.game.character_spritesheet.get_sprite(
+                    3, 98, self.width, self.height)
+            else:
+                self.image = left_animations[math.floor(self.animation_loop)]
+                self.animation_loop += 0.1
+                if self.animation_loop >= 3:
+                    self.animation_loop = 1
+
+        if self.facing == "right":
+            if self.x_change == 0:
+                self.image = self.game.character_spritesheet.get_sprite(
+                    3, 66, self.width, self.height)
+            else:
+                self.image = right_animations[math.floor(self.animation_loop)]
+                self.animation_loop += 0.1
+                if self.animation_loop >= 3:
+                    self.animation_loop = 1
 
 
 class Block(pygame.sprite.Sprite):
