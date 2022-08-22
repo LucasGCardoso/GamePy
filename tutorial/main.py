@@ -14,6 +14,7 @@ class Game:
 
         self.character_spritesheet = SpriteSheet('img/character.png')
         self.terrain_spritesheet = SpriteSheet('img/terrain.png')
+        self.enemy_spritesheet = SpriteSheet('img/enemy.png')
 
     # For the walls coliders:
     def create_tilemap(self):
@@ -24,6 +25,8 @@ class Game:
                     Block(self, j, i)
                 if column == "P":
                     Player(self, j, i)
+                if column == "E":
+                    Enemy(self, j, i)
 
     def new(self):
         # A new game starts.
