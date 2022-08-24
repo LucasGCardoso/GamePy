@@ -17,6 +17,7 @@ ENEMY_SPEED = 2
 
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 
 # Each tile 32px, and height is 480px, and width is 640px so we have:
