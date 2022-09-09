@@ -1,12 +1,12 @@
 """Config Tiles."""
 import pygame
 
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 480
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 640
 
 TILESIZE = 32
-MAP_WIDTH = 20
-MAP_HEIGHT = 20
+MAP_WIDTH = 30
+MAP_HEIGHT = 30
 
 FPS = 60
 # Layers determines who spawns first. First the blocks (floor and walls), then the player, in the top of the floor.

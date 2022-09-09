@@ -26,34 +26,52 @@ class Game:
         # - . for free spaces
         # - P for player
         # - E for Enemies
-        # tilemap = [
-        #     'BBBBBBBBBBBBBBBBBBBB',
-        #     'B..................B',
-        #     'B.....BBB..........B',
-        #     'B...E..............B',
-        #     'B..................B',
-        #     'B..................B',
-        #     'B..........BBB.....B',
-        #     'B..........B..P....B',
-        #     'B..........B.......B',
-        #     'B..........B.......B',
-        #     'B..................B',
-        #     'B..................B',
-        #     'B....E.............B',
-        #     'B..................B',
-        #     'BBBBBBBBBBBBBBBBBBBB',
-        # ]
 
-        number_of_floors = MAP_WIDTH * MAP_HEIGHT // 2
         tilemap = [['B' for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
+        percentage_of_floor = 0.6
+        wall_count_down = int(MAP_WIDTH * MAP_HEIGHT * percentage_of_floor)
 
-        # For now, replace half the walls by floors
-        # m[r//h][r - (r//h*w)] --> to access the correct tile
-        for i in range(number_of_floors):
-            random_num = randint(0, MAP_WIDTH * MAP_HEIGHT)
-            tilemap[random_num//MAP_HEIGHT][random_num -
-                                            (random_num//MAP_HEIGHT*MAP_WIDTH)] = '.'
-        tilemap[0][0] = 'P'
+        drunk_agent = {
+            'wallCountdown': wall_count_down,
+            'padding': 1,
+            'x': MAP_WIDTH // 2,
+            'y': MAP_HEIGHT // 2
+        }
+
+        free_tiles = []
+
+        while drunk_agent['wallCountdown'] >= 0:
+            x = drunk_agent['x']
+            y = drunk_agent['y']
+
+            if tilemap[y][x] == 'B':
+                tilemap[y][x] = '.'
+                drunk_agent['wallCountdown'] -= 1
+                free_tiles.append((y, x))
+
+            roll = randint(1, 4)
+
+            if roll == 1 and x > drunk_agent['padding']:
+                drunk_agent['x'] -= 1
+
+            if roll == 2 and x < MAP_WIDTH - 1 - drunk_agent['padding']:
+                drunk_agent['x'] += 1
+
+            if roll == 3 and y > drunk_agent['padding']:
+                drunk_agent['y'] -= 1
+
+            if roll == 4 and y < MAP_HEIGHT - 1 - drunk_agent['padding']:
+                drunk_agent['y'] += 1
+
+        tilemap[MAP_WIDTH // 2][MAP_HEIGHT // 2] = 'P'
+
+        enemy_count = 5
+        for _ in range(0, enemy_count):
+            index = randint(0, len(free_tiles))
+            y = free_tiles[index][0]
+            x = free_tiles[index][1]
+            tilemap[y][x] = 'E'
+
         return tilemap
 
     # For the walls coliders:
@@ -73,11 +91,12 @@ class Game:
         # A new game starts.
         self.playing = True
 
+        self.camera_group = CameraGroup(self)
+
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
-
         self.create_tilemap()
 
     def events(self):
@@ -109,7 +128,9 @@ class Game:
     def draw(self):
         # Game loop draw
         self.screen.fill(BLACK)
-        self.all_sprites.draw(self.screen)
+        self.camera_group.update()
+        self.camera_group.custom_draw(self.player)
+        # self.all_sprites.draw(self.screen)
         self.clock.tick(FPS)
         pygame.display.update()
 

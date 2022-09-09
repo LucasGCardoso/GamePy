@@ -16,6 +16,32 @@ class SpriteSheet:
         return sprite
 
 
+class CameraGroup(pygame.sprite.Group):
+    def __init__(self, game):
+        super().__init__()
+        self.game = game
+        self.display_surface = pygame.display.get_surface()
+
+        # camera offset
+        self.offset = pygame.math.Vector2()
+        self.half_w = self.display_surface.get_size()[0] // 2
+        self.half_h = self.display_surface.get_size()[1] // 2
+
+    def center_target_camera(self, target):
+        self.offset.x = target.rect.centerx - self.half_w
+        self.offset.y = target.rect.centery - self.half_h
+
+    def custom_draw(self, player):
+
+        self.center_target_camera(player)
+        # self.display_surface.fill('#71ddee')
+
+        # Active Sprites
+        for sprite in self.game.all_sprites:
+            offset_pos = sprite.rect.topleft - self.offset
+            self.display_surface.blit(sprite.image, offset_pos)
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -85,23 +111,23 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT]:
             # Camera logic. Just moves all sprites in the opposite direction of the player.
             # Looks like it is not good because of the loop. Search if there is a better way.
-            for sprite in self.game.all_sprites:
-                sprite.rect.x += PLAYER_SPEED
+            # for sprite in self.game.all_sprites:
+            #     sprite.rect.x += PLAYER_SPEED
             self.x_change -= PLAYER_SPEED
             self.facing = 'left'
         if keys[pygame.K_RIGHT]:
-            for sprite in self.game.all_sprites:
-                sprite.rect.x -= PLAYER_SPEED
+            # for sprite in self.game.all_sprites:
+            #     sprite.rect.x -= PLAYER_SPEED
             self.x_change += PLAYER_SPEED
             self.facing = 'right'
         if keys[pygame.K_UP]:
-            for sprite in self.game.all_sprites:
-                sprite.rect.y += PLAYER_SPEED
+            # for sprite in self.game.all_sprites:
+            #     sprite.rect.y += PLAYER_SPEED
             self.y_change -= PLAYER_SPEED
             self.facing = 'up'
         if keys[pygame.K_DOWN]:
-            for sprite in self.game.all_sprites:
-                sprite.rect.y -= PLAYER_SPEED
+            # for sprite in self.game.all_sprites:
+            #     sprite.rect.y -= PLAYER_SPEED
             self.y_change += PLAYER_SPEED
             self.facing = 'down'
 
