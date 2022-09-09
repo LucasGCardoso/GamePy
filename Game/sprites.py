@@ -5,11 +5,28 @@ import random
 
 
 class SpriteSheet:
+    """Class that holds a spritesheet image."""
 
     def __init__(self, file):
+        """Loads the image containing the sprites.
+
+        Args:
+            file (str): The path of the file containing the sprites.
+        """
         self.sheet = pygame.image.load(file).convert()
 
     def get_sprite(self, x, y, width, height):
+        """Returns a single sprite of the spritesheet based on position.
+
+        Args:
+            x (int): The X axis of the spritesheet for the top left corner of a specific sprite.
+            y (int): The Y axis of the spritesheet for the top left corner of a specific sprite.
+            width (int): The width of the specific sprite.
+            height (int): The height of the specific sprite.
+
+        Returns:
+            pygame.Surface: The specific sprite requested.
+        """
         sprite = pygame.Surface([width, height])
         sprite.blit(self.sheet, (0, 0), (x, y, width, height))
         sprite.set_colorkey(BLACK)
@@ -17,7 +34,14 @@ class SpriteSheet:
 
 
 class CameraGroup(pygame.sprite.Group):
+    """Class responsible for the game camera logic. Inherits from pygame.sprite.Group."""
+
     def __init__(self, game):
+        """Constructor of the Camera class.
+
+        Args:
+            game (game.Game): A reference for the Game class.
+        """
         super().__init__()
         self.game = game
         self.display_surface = pygame.display.get_surface()
@@ -28,22 +52,40 @@ class CameraGroup(pygame.sprite.Group):
         self.half_h = self.display_surface.get_size()[1] // 2
 
     def center_target_camera(self, target):
+        """Camera that puts the target sprite on the center of the screen and follows it.
+
+        Args:
+            target (pygame.sprite.Sprite): The sprite for the camera to follow.
+        """
         self.offset.x = target.rect.centerx - self.half_w
         self.offset.y = target.rect.centery - self.half_h
 
     def custom_draw(self, player):
+        """Draws every sprite of the game depending on the passed sprite position, creating the camera logic.
+
+        Args:
+            player (pygame.sprite.Sprite): The sprite that the camera will follow. Should be a Player class.
+        """
 
         self.center_target_camera(player)
-        # self.display_surface.fill('#71ddee')
+        self.display_surface.fill(BLACK)
 
-        # Active Sprites
         for sprite in self.game.all_sprites:
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
 
 
 class Player(pygame.sprite.Sprite):
+    """The main Player class. Inherits from pygame.sprite.Sprite."""
+
     def __init__(self, game, x, y):
+        """Constructor for the player.
+
+        Args:
+            game (game.Game): A reference for the Game class.
+            x (int): The X position of the screen where the player will spawn.
+            y (int): The Y position of the screen where the player will spawn.
+        """
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites
@@ -57,7 +99,7 @@ class Player(pygame.sprite.Sprite):
         self.x_change = 0
         self.y_change = 0
 
-        # Enum
+        # TODO: Enum
         self.facing = 'down'
 
         self.animation_loop = 1
@@ -70,7 +112,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-        # Must have a better way
+        # TODO: Must have a better way
         self.down_animations = [self.game.character_spritesheet.get_sprite(3, 2, self.width, self.height),
                                 self.game.character_spritesheet.get_sprite(
             35, 2, self.width, self.height),
@@ -92,6 +134,7 @@ class Player(pygame.sprite.Sprite):
             self.game.character_spritesheet.get_sprite(68, 66, self.width, self.height)]
 
     def update(self):
+        """Updates the player sprite. Moves, animates and check collisions."""
         self.movement()
         self.animate()
         self.collide_enemy()
@@ -101,37 +144,33 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.y_change
         self.collide_blocks('y')
 
-        # Temp variables, mayber return from method movement
         self.x_change = 0
         self.y_change = 0
 
     def movement(self):
+        """Method that makes the player movements."""
         # List of all pressed keys
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
-            # Camera logic. Just moves all sprites in the opposite direction of the player.
-            # Looks like it is not good because of the loop. Search if there is a better way.
-            # for sprite in self.game.all_sprites:
-            #     sprite.rect.x += PLAYER_SPEED
             self.x_change -= PLAYER_SPEED
             self.facing = 'left'
         if keys[pygame.K_RIGHT]:
-            # for sprite in self.game.all_sprites:
-            #     sprite.rect.x -= PLAYER_SPEED
             self.x_change += PLAYER_SPEED
             self.facing = 'right'
         if keys[pygame.K_UP]:
-            # for sprite in self.game.all_sprites:
-            #     sprite.rect.y += PLAYER_SPEED
             self.y_change -= PLAYER_SPEED
             self.facing = 'up'
         if keys[pygame.K_DOWN]:
-            # for sprite in self.game.all_sprites:
-            #     sprite.rect.y -= PLAYER_SPEED
             self.y_change += PLAYER_SPEED
             self.facing = 'down'
 
     def collide_blocks(self, direction):
+        """Checks for collisions with blocks.
+
+        Args:
+            direction (str): The orientation of the collision.
+        """
+        # TODO: ENUM
         if direction == "x":
             # Checks if a rect of a sprite is inside another rect
             hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
@@ -165,12 +204,15 @@ class Player(pygame.sprite.Sprite):
                         sprite.rect.y -= PLAYER_SPEED
 
     def collide_enemy(self):
+        """Checks for collisions with enemies."""
+        # TODO: Lose HP.
         hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         if hits:
             self.kill()
             self.game.playing = False
 
     def animate(self):
+        """Animates the player sprite."""
         if self.facing == "down":
             if self.y_change == 0:
                 self.image = self.game.character_spritesheet.get_sprite(

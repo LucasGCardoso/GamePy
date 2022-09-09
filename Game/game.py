@@ -1,4 +1,3 @@
-from turtle import width
 import pygame
 from sprites import *
 from config import *
@@ -6,7 +5,10 @@ from random import randint
 
 
 class Game:
+    """Game main class."""
+
     def __init__(self):
+        """The game constructor. Initializes the screen, fonts, images for the sprites and the game clock."""
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
@@ -21,11 +23,17 @@ class Game:
         self.game_over_background = pygame.image.load('img/gameover.png')
 
     def generate_map(self):
-        # We have:
-        # - B for walls
-        # - . for free spaces
-        # - P for player
-        # - E for Enemies
+        """Generates the map for the level. 
+           Uses procedural generation using a 'drunk' agent, that walks around in a random way removing the walls.
+           We have:
+           - B for walls
+           - . for free spaces
+           - P for player
+           - E for Enemies
+
+        Returns:
+            list: A matrix representing the tilemap for the level.
+        """
 
         tilemap = [['B' for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
         percentage_of_floor = 0.6
@@ -74,8 +82,8 @@ class Game:
 
         return tilemap
 
-    # For the walls coliders:
     def create_tilemap(self):
+        """Create the tilemap, calling the map generation method and rendering the result."""
         tilemap = self.generate_map()
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
@@ -88,7 +96,7 @@ class Game:
                     Enemy(self, j, i)
 
     def new(self):
-        # A new game starts.
+        """Method responsible for starting a new game, initializing the sprites and camera."""
         self.playing = True
 
         self.camera_group = CameraGroup(self)
@@ -100,7 +108,7 @@ class Game:
         self.create_tilemap()
 
     def events(self):
-        # Game loop events
+        """Method that loops on the events of the game, for each frame.."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
@@ -121,27 +129,31 @@ class Game:
                                TILESIZE, self.player.rect.y)
 
     def update(self):
-        # Game loop updates
+        """Method that updates all the sprites in the game, for each frame."""
         # This goes to all the sprites contained in the group and call their update method.
         self.all_sprites.update()
 
     def draw(self):
-        # Game loop draw
-        self.screen.fill(BLACK)
+        """Method that draws everything on the screen for each frame."""
         self.camera_group.update()
         self.camera_group.custom_draw(self.player)
-        # self.all_sprites.draw(self.screen)
         self.clock.tick(FPS)
         pygame.display.update()
 
     def main(self):
-        # Game loop
+        """The main loop of the game. Calls all the other methods.
+            It:
+            1 - Checks for events and take action
+            2 - Updates everything
+            3 - Draws the results of the frame
+        """
         while self.playing:
             self.events()
             self.update()
             self.draw()
 
     def game_over(self):
+        """Displays the Game Over screen."""
         text = self.font.render('Game Over', True, RED)
         text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
 
@@ -170,6 +182,7 @@ class Game:
             pygame.display.update()
 
     def intro_screen(self):
+        """Displays the Intro screen."""
         intro = True
 
         title = self.font.render('GamePy Project', True, BLACK)

@@ -1,3 +1,4 @@
+"""The main game script."""
 import pygame
 import sys
 
