@@ -157,7 +157,15 @@ class Game:
                     # Clicks E to interact with the environment, and is in range.
                     # TODO test interactable type
                     if isinstance(self.interactable_in_range, Stair):
-                        self.descend()
+                        if self.all_enemies_killed():
+                            print("All enemies killed")
+                            self.descend()
+                        else:
+                            print("There are still enemies remaining.")
+
+    def all_enemies_killed(self):
+        """Tests if there are enemies alive in the current level."""
+        return len(self.enemies) == 0
 
     def descend(self):
         self.current_level += 1

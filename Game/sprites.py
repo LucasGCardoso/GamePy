@@ -220,6 +220,9 @@ class Player(pygame.sprite.Sprite):
             if self.rect.colliderect(i.rect):
                 self.game.is_in_range_of_interactable = True
                 self.game.interactable_in_range = i
+            else:
+                self.game.is_in_range_of_interactable = False
+                self.game.interactable_in_range = None
 
     def collide_blocks(self, direction):
         """Checks for collisions with blocks.
