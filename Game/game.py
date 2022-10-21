@@ -120,12 +120,15 @@ class Game:
     def new(self):
         """Method responsible for starting a new game, initializing the sprites and camera."""
         self.playing = True
+        self.is_in_range_of_interactable = False
+        self.interactable_in_range = None
+        self.current_level = 0
 
         self.camera_group = CameraGroup(self)
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
-        self.interactable = pygame.sprite.LayeredUpdates()
+        self.interactables = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
         self.create_tilemap()
@@ -150,6 +153,18 @@ class Game:
                     if self.player.facing == 'right':
                         Attack(self, self.player.rect.x +
                                TILESIZE, self.player.rect.y)
+                if event.key == pygame.K_e and self.is_in_range_of_interactable:
+                    # Clicks E to interact with the environment, and is in range.
+                    # TODO test interactable type
+                    if isinstance(self.interactable_in_range, Stair):
+                        self.descend()
+
+    def descend(self):
+        self.current_level += 1
+        print("Descending to level ", self.current_level)
+        for sprite in self.all_sprites:
+            sprite.kill()
+        self.create_tilemap()
 
     def update(self):
         """Method that updates all the sprites in the game, for each frame."""
@@ -180,6 +195,10 @@ class Game:
         text = self.font.render('Game Over', True, RED)
         text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
 
+        # score = self.font.render(f'Score: {self.current_level}', True, RED)
+        # score_rect = score.get_rect(
+        #     center=(SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.8))
+
         restart_button = Button(10, SCREEN_HEIGHT - 60,
                                 120, 50, WHITE, BLACK, 'Restart', 32)
 
@@ -199,6 +218,7 @@ class Game:
 
             self.screen.blit(self.game_over_background, (0, 0))
             self.screen.blit(text, text_rect)
+            # self.screen.blit(score, score_rect)
             self.screen.blit(restart_button.image, restart_button.rect)
 
             self.clock.tick(FPS)

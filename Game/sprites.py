@@ -138,6 +138,7 @@ class Player(pygame.sprite.Sprite):
         self.movement()
         self.animate()
         self.collide_enemy()
+        self.collide_interactables()
 
         self.rect.x += self.x_change
         self.collide_blocks('x')
@@ -163,6 +164,13 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN]:
             self.y_change += PLAYER_SPEED
             self.facing = 'down'
+
+    def collide_interactables(self):
+        """Tests if the player is in range of and interactable object."""
+        for i in self.game.interactables:
+            if self.rect.colliderect(i.rect):
+                self.game.is_in_range_of_interactable = True
+                self.game.interactable_in_range = i
 
     def collide_blocks(self, direction):
         """Checks for collisions with blocks.
@@ -370,7 +378,7 @@ class Stair(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
         self._layer = GROUND_LAYER
-        self.groups = self.game.all_sprites, self.game.interactable
+        self.groups = self.game.all_sprites, self.game.interactables
         super().__init__(self.groups)
 
         self.x = x * TILESIZE
