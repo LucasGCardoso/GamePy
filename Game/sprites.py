@@ -429,8 +429,8 @@ class Block(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
-        self.image = self.game.terrain_spritesheet.get_sprite(
-            960, 448, self.width, self.height)
+        self.image = self.game.wall_spritesheet.get_sprite(
+            0, 0, self.width, self.height)
 
         # Hitbox.
         self.rect = self.image.get_rect()
@@ -472,8 +472,8 @@ class Ground(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
-        self.image = self.game.terrain_spritesheet.get_sprite(
-            64, 352, self.width, self.height)
+        self.image = self.game.floor_spritesheet.get_sprite(
+            0, 0, self.width, self.height)
 
         # Hitbox.
         self.rect = self.image.get_rect()
