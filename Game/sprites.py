@@ -103,9 +103,11 @@ class Player(pygame.sprite.Sprite):
         self.facing = 'down'
 
         self.animation_loop = 1
+        self.idle_animation_change = 0.04
+        self.animation_change = 0.08
 
         self.image = self.game.character_spritesheet.get_sprite(
-            3, 2, self.width, self.height)
+            128, 0, self.width, self.height)
 
         # Hitbox.
         self.rect = self.image.get_rect()
@@ -113,25 +115,72 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = self.y
 
         # TODO: Must have a better way
-        self.down_animations = [self.game.character_spritesheet.get_sprite(3, 2, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(
-            35, 2, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(68, 2, self.width, self.height)]
+        self.down_animations = [
+            self.game.character_spritesheet.get_sprite(
+                128, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                160, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                192, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(224, 0, self.width, self.height)]
 
-        self.up_animations = [self.game.character_spritesheet.get_sprite(3, 34, self.width, self.height),
-                              self.game.character_spritesheet.get_sprite(
-            35, 34, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(68, 34, self.width, self.height)]
+        self.up_animations = [self.game.character_spritesheet.get_sprite(
+            128, 64, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                160, 64, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                192, 64, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(224, 64, self.width, self.height)]
 
-        self.left_animations = [self.game.character_spritesheet.get_sprite(3, 98, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(
-            35, 98, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(68, 98, self.width, self.height)]
+        self.left_animations = [self.game.character_spritesheet.get_sprite(
+            128, 32, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                160, 32, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                192, 32, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(224, 32, self.width, self.height)]
 
-        self.right_animations = [self.game.character_spritesheet.get_sprite(3, 66, self.width, self.height),
-                                 self.game.character_spritesheet.get_sprite(
-            35, 66, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(68, 66, self.width, self.height)]
+        self.right_animations = [self.game.character_spritesheet.get_sprite(
+            128, 96, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                160, 96, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                192, 96, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(224, 96, self.width, self.height)]
+
+        # Idle animations
+        self.idle_down_animations = [
+            self.game.character_spritesheet.get_sprite(
+                0, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                32, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                64, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(96, 0, self.width, self.height)]
+
+        self.idle_up_animations = [self.game.character_spritesheet.get_sprite(
+            0, 64, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                32, 64, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                64, 64, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(96, 64, self.width, self.height)]
+
+        self.idle_left_animations = [self.game.character_spritesheet.get_sprite(
+            0, 32, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                32, 32, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                64, 32, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(96, 32, self.width, self.height)]
+
+        self.idle_right_animations = [self.game.character_spritesheet.get_sprite(
+            0, 96, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                32, 96, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                64, 96, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(96, 96, self.width, self.height)]
 
     def update(self):
         """Updates the player sprite. Moves, animates and check collisions."""
@@ -223,46 +272,58 @@ class Player(pygame.sprite.Sprite):
         """Animates the player sprite."""
         if self.facing == "down":
             if self.y_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(
-                    3, 2, self.width, self.height)
+                self.image = self.idle_down_animations[math.floor(
+                    self.animation_loop)]
+                self.animation_loop += self.idle_animation_change
+                if self.animation_loop >= 4:
+                    self.animation_loop = 1
             else:
                 self.image = self.down_animations[math.floor(
                     self.animation_loop)]
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:
+                self.animation_loop += self.animation_change
+                if self.animation_loop >= 4:
                     self.animation_loop = 1
 
         if self.facing == "up":
             if self.y_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(
-                    3, 34, self.width, self.height)
+                self.image = self.idle_up_animations[math.floor(
+                    self.animation_loop)]
+                self.animation_loop += self.idle_animation_change
+                if self.animation_loop >= 4:
+                    self.animation_loop = 1
             else:
                 self.image = self.up_animations[math.floor(
                     self.animation_loop)]
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:
+                self.animation_loop += self.animation_change
+                if self.animation_loop >= 4:
                     self.animation_loop = 1
 
         if self.facing == "left":
             if self.x_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(
-                    3, 98, self.width, self.height)
+                self.image = self.idle_left_animations[math.floor(
+                    self.animation_loop)]
+                self.animation_loop += self.idle_animation_change
+                if self.animation_loop >= 4:
+                    self.animation_loop = 1
             else:
                 self.image = self.left_animations[math.floor(
                     self.animation_loop)]
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:
+                self.animation_loop += self.animation_change
+                if self.animation_loop >= 4:
                     self.animation_loop = 1
 
         if self.facing == "right":
             if self.x_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(
-                    3, 66, self.width, self.height)
+                self.image = self.idle_right_animations[math.floor(
+                    self.animation_loop)]
+                self.animation_loop += self.idle_animation_change
+                if self.animation_loop >= 4:
+                    self.animation_loop = 1
             else:
                 self.image = self.right_animations[math.floor(
                     self.animation_loop)]
-                self.animation_loop += 0.1
-                if self.animation_loop >= 3:
+                self.animation_loop += self.animation_change
+                if self.animation_loop >= 4:
                     self.animation_loop = 1
 
 
