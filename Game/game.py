@@ -30,6 +30,7 @@ class Game:
            - . for free spaces
            - P for player
            - E for Enemies
+           - S for stairs
 
         Returns:
             list: A matrix representing the tilemap for the level.
@@ -71,14 +72,33 @@ class Game:
             if roll == 4 and y < MAP_HEIGHT - 1 - drunk_agent['padding']:
                 drunk_agent['y'] += 1
 
-        tilemap[MAP_WIDTH // 2][MAP_HEIGHT // 2] = 'P'
+        player_y = MAP_WIDTH // 2
+        player_x = MAP_HEIGHT // 2
+        tilemap[player_y][player_x] = 'P'
 
+        # Spawn enemies
         enemy_count = 5
         for _ in range(0, enemy_count):
-            index = randint(0, len(free_tiles))
+            index = randint(0, len(free_tiles) - 1)
             y = free_tiles[index][0]
             x = free_tiles[index][1]
             tilemap[y][x] = 'E'
+
+        # Spawn stairs
+        # Tries 30 times to spawn a random stair that is some percentage away from the player.
+        tentatives = 30
+        stair_distance = 0.7
+        while tentatives >= 0:
+            tentatives = tentatives - 1
+            index = randint(0, len(free_tiles) - 1)
+            y = free_tiles[index][0]
+            x = free_tiles[index][1]
+            if (y - player_y >= MAP_WIDTH * stair_distance) and (x - player_x >= MAP_HEIGHT * stair_distance):
+                tilemap[y][x] = 'S'
+                break
+            if tentatives == 0:
+                tilemap[y][x] = 'S'
+                break
 
         return tilemap
 
@@ -94,6 +114,8 @@ class Game:
                     self.player = Player(self, j, i)
                 if column == "E":
                     Enemy(self, j, i)
+                if column == "S":
+                    Stair(self, j, i)
 
     def new(self):
         """Method responsible for starting a new game, initializing the sprites and camera."""
@@ -103,6 +125,7 @@ class Game:
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
+        self.interactable = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
         self.create_tilemap()
