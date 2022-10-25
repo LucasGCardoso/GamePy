@@ -78,28 +78,43 @@ class Game:
         player_x = MAP_HEIGHT // 2
         tilemap[player_y][player_x] = 'P'
 
-        # Spawn enemies
+        # Spawn enemies from a certain distance from the player.
         enemy_count = 5
-        for _ in range(0, enemy_count):
+        enemy_distance = 0.3
+        while (enemy_count > 0):
             index = randint(0, len(free_tiles) - 1)
             y = free_tiles[index][0]
             x = free_tiles[index][1]
-            tilemap[y][x] = 'E'
+
+            y_distance = abs(y - player_y)
+            x_distance = abs(x - player_x)
+
+            if (y_distance >= MAP_WIDTH * enemy_distance) and (x_distance >= MAP_HEIGHT * enemy_distance):
+                tilemap[y][x] = 'E'
+                enemy_count -= 1
 
         # Spawn stairs
         # Tries 30 times to spawn a random stair that is some percentage away from the player.
         tentatives = 30
         stair_distance = 0.7
+        greater_x_and_y = [0, 0]
         while tentatives >= 0:
             tentatives = tentatives - 1
             index = randint(0, len(free_tiles) - 1)
             y = free_tiles[index][0]
             x = free_tiles[index][1]
-            if (y - player_y >= MAP_WIDTH * stair_distance) and (x - player_x >= MAP_HEIGHT * stair_distance):
+            y_distance = abs(y - player_y)
+            x_distance = abs(x - player_x)
+            if (y_distance >= MAP_WIDTH * stair_distance) and (x_distance >= MAP_HEIGHT * stair_distance):
                 tilemap[y][x] = 'S'
                 break
+            # Saves the best X and Y values so far.
+            if y_distance > greater_x_and_y[1] and x_distance > greater_x_and_y[0]:
+                greater_x_and_y[1] = y
+                greater_x_and_y[0] = x
+            # Uses the best X and Y values to create the stairs if not created before.
             if tentatives == 0:
-                tilemap[y][x] = 'S'
+                tilemap[greater_x_and_y[1]][greater_x_and_y[0]] = 'S'
                 break
 
         return tilemap
@@ -188,7 +203,6 @@ class Game:
         # This goes to all the sprites contained in the group and call their update method.
         self.all_sprites.update()
         self.attack_cooldown -= self.cooldown_step
-        print(self.attack_cooldown)
 
     def draw(self):
         """Method that draws everything on the screen for each frame."""
