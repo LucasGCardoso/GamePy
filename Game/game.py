@@ -126,6 +126,9 @@ class Game:
         self.interactable_in_range = None
         self.current_level = 0
 
+        self.attack_cooldown = 0
+        self.cooldown_step = 0.2
+
         self.camera_group = CameraGroup(self)
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
@@ -143,18 +146,22 @@ class Game:
                 self.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    if self.player.facing == 'up':
+                    if self.player.facing == 'up' and self.attack_cooldown <= 0:
                         Attack(self, self.player.rect.x,
                                self.player.rect.y - TILESIZE)
-                    if self.player.facing == 'down':
+                        self.attack_cooldown = 10
+                    if self.player.facing == 'down' and self.attack_cooldown <= 0:
                         Attack(self, self.player.rect.x,
                                self.player.rect.y + TILESIZE)
-                    if self.player.facing == 'left':
+                        self.attack_cooldown = 10
+                    if self.player.facing == 'left' and self.attack_cooldown <= 0:
                         Attack(self, self.player.rect.x -
                                TILESIZE, self.player.rect.y)
-                    if self.player.facing == 'right':
+                        self.attack_cooldown = 10
+                    if self.player.facing == 'right' and self.attack_cooldown <= 0:
                         Attack(self, self.player.rect.x +
                                TILESIZE, self.player.rect.y)
+                        self.attack_cooldown = 10
                 if event.key == pygame.K_e and self.is_in_range_of_interactable:
                     # Clicks E to interact with the environment, and is in range.
                     # TODO test interactable type
@@ -180,6 +187,8 @@ class Game:
         """Method that updates all the sprites in the game, for each frame."""
         # This goes to all the sprites contained in the group and call their update method.
         self.all_sprites.update()
+        self.attack_cooldown -= self.cooldown_step
+        print(self.attack_cooldown)
 
     def draw(self):
         """Method that draws everything on the screen for each frame."""
