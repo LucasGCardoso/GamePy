@@ -107,7 +107,7 @@ class Player(pygame.sprite.Sprite):
         self.animation_change = 0.08
 
         self.image = self.game.character_spritesheet.get_sprite(
-            128, 0, self.width, self.height)
+            0, 0, self.width, self.height)
 
         # Hitbox.
         self.rect = self.image.get_rect()
@@ -117,36 +117,61 @@ class Player(pygame.sprite.Sprite):
         # TODO: Must have a better way
         self.down_animations = [
             self.game.character_spritesheet.get_sprite(
-                128, 0, self.width, self.height),
+                0, 0, self.width, self.height),
             self.game.character_spritesheet.get_sprite(
-                160, 0, self.width, self.height),
+                96, 0, self.width, self.height),
             self.game.character_spritesheet.get_sprite(
                 192, 0, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(224, 0, self.width, self.height)]
+            self.game.character_spritesheet.get_sprite(
+                288, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                384, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(480, 0, self.width, self.height)
+        ]
 
-        self.up_animations = [self.game.character_spritesheet.get_sprite(
-            128, 64, self.width, self.height),
+        self.up_animations = [
             self.game.character_spritesheet.get_sprite(
-                160, 64, self.width, self.height),
+                576, 0, self.width, self.height),
             self.game.character_spritesheet.get_sprite(
-                192, 64, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(224, 64, self.width, self.height)]
+                672, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                768, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                864, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                960, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(1056, 0, self.width, self.height)
+        ]
 
-        self.left_animations = [self.game.character_spritesheet.get_sprite(
-            128, 32, self.width, self.height),
+        self.right_animations = [
             self.game.character_spritesheet.get_sprite(
-                160, 32, self.width, self.height),
+                1152, 0, self.width, self.height),
             self.game.character_spritesheet.get_sprite(
-                192, 32, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(224, 32, self.width, self.height)]
+                1248, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                1344, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                1440, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                1536, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(1632, 0, self.width, self.height)
+        ]
 
-        self.right_animations = [self.game.character_spritesheet.get_sprite(
-            128, 96, self.width, self.height),
+        self.left_animations = [
             self.game.character_spritesheet.get_sprite(
-                160, 96, self.width, self.height),
+                1728, 0, self.width, self.height),
             self.game.character_spritesheet.get_sprite(
-                192, 96, self.width, self.height),
-            self.game.character_spritesheet.get_sprite(224, 96, self.width, self.height)]
+                1824, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                1920, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                2016, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(
+                2112, 0, self.width, self.height),
+            self.game.character_spritesheet.get_sprite(2208, 0, self.width, self.height)
+        ]
+
+        
 
         # Idle animations
         self.idle_down_animations = [

@@ -15,7 +15,7 @@ class Game:
         self.font = pygame.font.Font('fonts/times_new_roman.ttf', 32)
         self.running = True
 
-        self.character_spritesheet = SpriteSheet('img/character_movement.png')
+        self.character_spritesheet = SpriteSheet('img/Knight_Sheet.png')
         self.terrain_spritesheet = SpriteSheet('img/terrain.png')
         self.floor_spritesheet = SpriteSheet('img/Floor2.png')
         self.wall_spritesheet = SpriteSheet('img/Wall1.png')
