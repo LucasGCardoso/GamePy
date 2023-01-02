@@ -2,6 +2,7 @@ import pygame
 from sprites import *
 from config import *
 from random import randint
+from pygame import mixer
 
 
 class Game:
@@ -15,12 +16,18 @@ class Game:
         self.font = pygame.font.Font('fonts/times_new_roman.ttf', 32)
         self.running = True
 
-        self.character_spritesheet = SpriteSheet('img/Knight_Sheet.png')
-        self.terrain_spritesheet = SpriteSheet('img/terrain.png')
-        self.floor_spritesheet = SpriteSheet('img/Floor2.png')
-        self.wall_spritesheet = SpriteSheet('img/Wall1.png')
-        self.enemy_spritesheet = SpriteSheet('img/enemy.png')
-        self.attack_spritesheet = SpriteSheet('img/attack.png')
+        self.character_spritesheet = SpriteSheet('img/chars/player-sheet.png')
+        self.floor_spritesheet = SpriteSheet('img/tiles/stone_brick_floor.png')
+        self.floor_detail_spritesheet = SpriteSheet(
+            'img/tiles/stone_brick_floor_detail.png')
+        self.stair_spritesheet = SpriteSheet('img/tiles/stairs.png')
+        self.wall_spritesheet = SpriteSheet('img/tiles/stone_wall.png')
+        self.wall_spritesheet_detail1 = SpriteSheet(
+            'img/tiles/stone_wall_detail1.png')
+        self.wall_spritesheet_detail2 = SpriteSheet(
+            'img/tiles/stone_wall_detail2.png')
+        self.enemy_spritesheet = SpriteSheet('img/chars/enemy.png')
+        self.attack_spritesheet = SpriteSheet('img/chars/attack-sheet.png')
         self.intro_background = pygame.image.load('img/introbackground.png')
         self.game_over_background = pygame.image.load('img/gameover.png')
 
@@ -152,6 +159,12 @@ class Game:
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
         self.create_tilemap()
+
+        # Starts background song
+        mixer.init()
+        mixer.music.load('./sounds/background.wav')
+        mixer.music.set_volume(0.2)
+        mixer.music.play(-1)
 
     def events(self):
         """Method that loops on the events of the game, for each frame.."""
