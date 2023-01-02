@@ -3,6 +3,8 @@ from sprites import *
 from config import *
 from random import randint
 from pygame import mixer
+import yaml
+from yaml.loader import SafeLoader
 
 
 class Game:
@@ -11,15 +13,17 @@ class Game:
     def __init__(self):
         """The game constructor. Initializes the screen, fonts, images for the sprites and the game clock."""
         pygame.init()
+
+        # Open the file and load the file
+        with open('config.yaml') as f:
+            self.cfg = yaml.load(f, Loader=SafeLoader)
+            print(self.cfg)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font('fonts/times_new_roman.ttf', 32)
         self.running = True
 
         self.character_spritesheet = SpriteSheet('img/chars/player-sheet.png')
-        self.floor_spritesheet = SpriteSheet('img/tiles/stone_brick_floor.png')
-        self.floor_detail_spritesheet = SpriteSheet(
-            'img/tiles/stone_brick_floor_detail.png')
         self.stair_spritesheet = SpriteSheet('img/tiles/stairs.png')
         self.wall_spritesheet = SpriteSheet('img/tiles/stone_wall.png')
         self.wall_spritesheet_detail1 = SpriteSheet(
@@ -30,6 +34,21 @@ class Game:
         self.attack_spritesheet = SpriteSheet('img/chars/attack-sheet.png')
         self.intro_background = pygame.image.load('img/introbackground.png')
         self.game_over_background = pygame.image.load('img/gameover.png')
+
+        # Floors
+        self.floor_spritesheet = SpriteSheet('img/tiles/grass.png')
+        self.floor_detail_spritesheet = SpriteSheet(
+            'img/tiles/grass_flower.png')
+
+        if self.cfg['difficulty'] == 'easy':
+            self.enemy_qtd = 5
+        elif self.cfg['difficulty'] == 'hard':
+            self.enemy_qtd = 10
+        elif self.cfg['difficulty'] == 'impossible':
+            self.enemy_qtd = 20
+        else:
+            raise ValueError(
+                "Difficulty provided does not exist. Try using 'easy', 'hard' or 'impossible'. ")
 
     def generate_map(self):
         """Generates the map for the level. 
@@ -86,7 +105,7 @@ class Game:
         tilemap[player_y][player_x] = 'P'
 
         # Spawn enemies from a certain distance from the player.
-        enemy_count = 5
+        enemy_count = self.enemy_qtd
         enemy_distance = 0.3
         while (enemy_count > 0):
             index = randint(0, len(free_tiles) - 1)
@@ -209,6 +228,14 @@ class Game:
         print("Descending to level ", self.current_level)
         for sprite in self.all_sprites:
             sprite.kill()
+        if self.current_level > 2:
+            self.floor_spritesheet = SpriteSheet('img/tiles/dirt.png')
+            self.floor_detail_spritesheet = SpriteSheet('img/tiles/mud.png')
+        if self.current_level > 5:
+            self.floor_spritesheet = SpriteSheet(
+                'img/tiles/stone_brick_floor.png')
+            self.floor_detail_spritesheet = SpriteSheet(
+                'img/tiles/stone_brick_floor_detail.png')
         self.create_tilemap()
 
     def update(self):
