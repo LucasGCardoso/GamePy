@@ -301,8 +301,24 @@ class Game:
         """Displays the Intro screen."""
         intro = True
 
-        title = self.font.render('GamePy Project', True, BLACK)
+        title = self.font.render('Tiny Adventure', True, BLACK)
+        credits = self.font.render(
+            'sounds by', True, BLACK)
+        credits_1 = self.font.render(
+            'SoundFlakes (Giant Demon - Roar - 02.wav);', True, BLACK)
+        credits_2 = self.font.render(
+            'BloodPixelHero (Adventure theme);', True, BLACK)
+        credits_3 = self.font.render(
+            'Merrick079 (Sword sound 2.wav)', True, BLACK)
+        credits_4 = self.font.render(
+            'at freesound.org', True, BLACK)
+
         title_rect = title.get_rect(x=10, y=10)
+        credits_rect = credits.get_rect(x=10, y=600)
+        credits_rect_1 = credits.get_rect(x=10, y=680)
+        credits_rect_2 = credits.get_rect(x=10, y=760)
+        credits_rect_3 = credits.get_rect(x=10, y=840)
+        credits_rect_4 = credits.get_rect(x=10, y=920)
 
         play_button = Button(10, 50, 100, 50, WHITE, BLACK, 'Play', 32)
 
@@ -319,6 +335,11 @@ class Game:
 
             self.screen.blit(self.intro_background, (0, 0))
             self.screen.blit(title, title_rect)
+            self.screen.blit(credits, credits_rect)
+            self.screen.blit(credits_1, credits_rect_1)
+            self.screen.blit(credits_2, credits_rect_2)
+            self.screen.blit(credits_3, credits_rect_3)
+            self.screen.blit(credits_4, credits_rect_4)
             self.screen.blit(play_button.image, play_button.rect)
             self.clock.tick(FPS)
             pygame.display.update()
