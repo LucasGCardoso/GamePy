@@ -1,8 +1,14 @@
 """Config Tiles."""
 import pygame
+import yaml
+from yaml.loader import SafeLoader
 
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
+# Open the file and load the file
+with open('config.yaml') as f:
+    cfg = yaml.load(f, Loader=SafeLoader)
+
+SCREEN_WIDTH = cfg['screen_width']
+SCREEN_HEIGHT = cfg['screen_height']
 
 TILESIZE = 96  # 32
 PLAYERSIZE = 64
