@@ -5,6 +5,7 @@ from random import randint
 from pygame import mixer
 import yaml
 from yaml.loader import SafeLoader
+import time
 
 
 class Game:
@@ -40,15 +41,16 @@ class Game:
         self.floor_detail_spritesheet = SpriteSheet(
             'img/tiles/grass_flower.png')
 
-        if self.cfg['difficulty'] == 'easy':
-            self.enemy_qtd = 5
-        elif self.cfg['difficulty'] == 'hard':
-            self.enemy_qtd = 10
-        elif self.cfg['difficulty'] == 'impossible':
-            self.enemy_qtd = 20
-        else:
-            raise ValueError(
-                "Difficulty provided does not exist. Try using 'easy', 'hard' or 'impossible'. ")
+
+        # if self.cfg['difficulty'] == 'easy':
+        #     self.enemy_qtd = 5
+        # elif self.cfg['difficulty'] == 'hard':
+        #     self.enemy_qtd = 10
+        # elif self.cfg['difficulty'] == 'impossible':
+        #     self.enemy_qtd = 20
+        # else:
+        #     raise ValueError(
+        #         "Difficulty provided does not exist. Try using 'easy', 'hard' or 'impossible'. ")
 
     def generate_map(self):
         """Generates the map for the level. 
@@ -300,8 +302,17 @@ class Game:
     def intro_screen(self):
         """Displays the Intro screen."""
         intro = True
+        difficulty_button_x = 180
+        difficulty_button_y = 150
+        difficulty_button_width = 200
+        difficulty_button_height = 50
+        difficulty_button_font_size = 32
+
+        self.difficulty = 0
+        self.enemy_qtd = 5
 
         title = self.font.render('Tiny Adventure', True, BLACK)
+        dif_text = self.font.render('Difficulty: ', True, BLACK)
         credits = self.font.render(
             'sounds by', True, BLACK)
         credits_1 = self.font.render(
@@ -314,6 +325,7 @@ class Game:
             'at freesound.org', True, BLACK)
 
         title_rect = title.get_rect(x=10, y=10)
+        dif_rect = dif_text.get_rect(x=10, y=150)
         credits_rect = credits.get_rect(x=10, y=600)
         credits_rect_1 = credits.get_rect(x=10, y=680)
         credits_rect_2 = credits.get_rect(x=10, y=760)
@@ -321,6 +333,16 @@ class Game:
         credits_rect_4 = credits.get_rect(x=10, y=920)
 
         play_button = Button(10, 50, 100, 50, WHITE, BLACK, 'Play', 32)
+        difficulty_button = Button(
+            difficulty_button_x,
+            difficulty_button_y,
+            difficulty_button_width,
+            difficulty_button_height,
+            WHITE,
+            BLACK,
+            f'{DIFFICULTIES[self.difficulty]}',
+            difficulty_button_font_size
+        )
 
         while intro:
             for event in pygame.event.get():
@@ -332,14 +354,42 @@ class Game:
 
             if play_button.is_pressed(mouse_pos, mouse_pressed):
                 intro = False
+            
+            if difficulty_button.is_pressed(mouse_pos, mouse_pressed):
+                self.difficulty += 1
+                if self.difficulty >= len(DIFFICULTIES):
+                    self.difficulty = 0
+
+                # Set enemy quantity based on difficulty.
+                if self.difficulty == 0:
+                    self.enemy_qtd = 5
+                elif self.difficulty == 1:
+                    self.enemy_qtd = 10
+                else:
+                    self.enemy_qtd = 20
+                
+                # Update button text.
+                difficulty_button = Button(
+                    difficulty_button_x,
+                    difficulty_button_y,
+                    difficulty_button_width,
+                    difficulty_button_height,
+                    WHITE,
+                    BLACK,
+                    f'{DIFFICULTIES[self.difficulty]}',
+                    difficulty_button_font_size
+                )
+                time.sleep(0.5)  
 
             self.screen.blit(self.intro_background, (0, 0))
             self.screen.blit(title, title_rect)
+            self.screen.blit(dif_text, dif_rect)
             self.screen.blit(credits, credits_rect)
             self.screen.blit(credits_1, credits_rect_1)
             self.screen.blit(credits_2, credits_rect_2)
             self.screen.blit(credits_3, credits_rect_3)
             self.screen.blit(credits_4, credits_rect_4)
             self.screen.blit(play_button.image, play_button.rect)
+            self.screen.blit(difficulty_button.image, difficulty_button.rect)
             self.clock.tick(FPS)
             pygame.display.update()

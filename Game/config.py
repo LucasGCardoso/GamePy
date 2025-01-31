@@ -30,6 +30,8 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 
+DIFFICULTIES = ['Easy', 'Hard', 'Impossible']
+
 # Each tile 32px, and height is 480px, and width is 640px so we have:
 # - 480/32 = 15 rows
 # - 640/32 = 20 columns
